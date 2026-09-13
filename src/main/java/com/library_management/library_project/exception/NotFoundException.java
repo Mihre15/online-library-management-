@@ -1,4 +1,4 @@
-package com.library_management.library_project.exception;
+package com.library_management.project.exception;
 
 public class NotFoundException extends RuntimeException {
 

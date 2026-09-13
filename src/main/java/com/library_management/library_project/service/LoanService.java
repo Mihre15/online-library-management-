@@ -1,19 +1,19 @@
-package com.library_management.library_project.service;
+package com.library_management.project.service;
 
-
+import com.library_management.project.entity.Book;
+import com.library_management.project.entity.Loan;
+import com.library_management.project.entity.LoanStatus;
+import com.library_management.project.entity.Member;
+import com.library_management.project.exception.InvalidLoanStateException;
+import com.library_management.project.exception.LoanNotAllowedException;
+import com.library_management.project.exception.NotFoundException;
+import com.library_management.project.repository.BookRepository;
+import com.library_management.project.repository.LoanRepository;
+import com.library_management.project.repository.MemberRepository;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
-
-import com.library_management.library_project.entity.Book;
-import com.library_management.library_project.entity.Loan;
-import com.library_management.library_project.entity.LoanStatus;
-import com.library_management.library_project.entity.Member;
-import com.library_management.library_project.exception.NotFoundException;
-import com.library_management.library_project.repository.BookRepository;
-import com.library_management.library_project.repository.LoanRepository;
-import com.library_management.library_project.repository.MemberRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
