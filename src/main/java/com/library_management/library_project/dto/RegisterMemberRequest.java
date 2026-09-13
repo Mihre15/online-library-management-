@@ -1,4 +1,4 @@
-package com.library_management.project.dto;
+package com.library_management.library_project.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

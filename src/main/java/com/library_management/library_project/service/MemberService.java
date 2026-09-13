@@ -1,9 +1,9 @@
-package com.library_management.project.service;
+package com.library_management.library_project.service;
 
-import com.library_management.project.entity.Member;
-import com.library_management.project.entity.MembershipStatus;
-import com.library_management.project.exception.NotFoundException;
-import com.library_management.project.repository.MemberRepository;
+import com.library_management.library_project.entity.Member;
+import com.library_management.library_project.entity.MembershipStatus;
+import com.library_management.library_project.exception.NotFoundException;
+import com.library_management.library_project.repository.MemberRepository;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;

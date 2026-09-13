@@ -1,6 +1,6 @@
-package com.library_management.project.dto;
+package com.library_management.library_project.dto;
 
-import com.library_management.project.entity.Loan;
+import com.library_management.library_project.entity.Loan;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 

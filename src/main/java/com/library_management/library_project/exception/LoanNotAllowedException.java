@@ -1,4 +1,4 @@
-package com.library_management.project.exception;
+package com.library_management.library_project.exception;
 
 public class LoanNotAllowedException extends RuntimeException {
 

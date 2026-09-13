@@ -1,8 +1,8 @@
-package com.library_management.project.service;
+package com.library_management.library_project.service;
 
-import com.library_management.project.entity.Book;
-import com.library_management.project.entity.Member;
-import com.library_management.project.entity.MembershipStatus;
+import com.library_management.library_project.entity.Book;
+import com.library_management.library_project.entity.Member;
+import com.library_management.library_project.entity.MembershipStatus;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;

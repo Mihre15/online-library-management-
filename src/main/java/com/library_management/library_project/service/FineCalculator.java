@@ -1,4 +1,4 @@
-package com.library_management.project.service;
+package com.library_management.library_project.service;
 
 import java.math.BigDecimal;
 import org.springframework.stereotype.Component;

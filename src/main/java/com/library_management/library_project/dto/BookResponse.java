@@ -1,6 +1,6 @@
-package com.library_management.project.dto;
+package com.library_management.library_project.dto;
 
-import com.library_management.project.entity.Book;
+import com.library_management.library_project.entity.Book;
 
 public record BookResponse(
         Long id,
