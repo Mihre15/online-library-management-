@@ -1,19 +1,19 @@
 package com.library_management.library_project.service;
 
-
-import java.time.Clock;
-import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
-import java.util.List;
-
 import com.library_management.library_project.entity.Book;
 import com.library_management.library_project.entity.Loan;
 import com.library_management.library_project.entity.LoanStatus;
 import com.library_management.library_project.entity.Member;
+import com.library_management.library_project.exception.InvalidLoanStateException;
+import com.library_management.library_project.exception.LoanNotAllowedException;
 import com.library_management.library_project.exception.NotFoundException;
 import com.library_management.library_project.repository.BookRepository;
 import com.library_management.library_project.repository.LoanRepository;
 import com.library_management.library_project.repository.MemberRepository;
+import java.time.Clock;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,11 +21,11 @@ import org.springframework.transaction.annotation.Transactional;
  * Loan lifecycle (state transition model):
  *
  * <pre>
- *   ACTIVE --(returnBook, on time)--&gt;  RETURNED
- *   ACTIVE --(markOverdue, past due)--&gt; OVERDUE
- *   OVERDUE --(returnBook)--&gt;          RETURNED
- *   ACTIVE --(reportLost)--&gt;           LOST
- *   OVERDUE --(reportLost)--&gt;          LOST
+ *   ACTIVE --(returnBook, on time)--> RETURNED
+ *   ACTIVE --(markOverdue, past due)--> OVERDUE
+ *   OVERDUE --(returnBook)-->          RETURNED
+ *   ACTIVE --(reportLost)-->           LOST
+ *   OVERDUE --(reportLost)-->          LOST
  *   RETURNED, LOST are terminal states.
  * </pre>
  */
@@ -33,7 +33,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class LoanService {
 
     static final int DEFAULT_LOAN_PERIOD_DAYS = 14;
-    private static final List<LoanStatus> OPEN_STATUSES = List.of(LoanStatus.ACTIVE, LoanStatus.OVERDUE);
+    private static final List<LoanStatus> OPEN_STATUSES =
+            List.of(LoanStatus.ACTIVE, LoanStatus.OVERDUE, LoanStatus.RETURN_PENDING);
 
     private final LoanRepository loanRepository;
     private final MemberRepository memberRepository;
@@ -85,11 +86,22 @@ public class LoanService {
     }
 
     @Transactional
-    public Loan returnBook(Long loanId) {
+    public Loan requestReturn(Long loanId) {
         Loan loan = getById(loanId);
         if (loan.getStatus() != LoanStatus.ACTIVE && loan.getStatus() != LoanStatus.OVERDUE) {
             throw new InvalidLoanStateException(
                     "Cannot return a loan in status " + loan.getStatus());
+        }
+        loan.setStatus(LoanStatus.RETURN_PENDING);
+        return loanRepository.save(loan);
+    }
+
+    @Transactional
+    public Loan confirmReturn(Long loanId) {
+        Loan loan = getById(loanId);
+        if (loan.getStatus() != LoanStatus.RETURN_PENDING) {
+            throw new InvalidLoanStateException(
+                    "Cannot confirm a loan in status " + loan.getStatus());
         }
 
         LocalDate today = LocalDate.now(clock);
@@ -149,5 +161,9 @@ public class LoanService {
 
     public List<Loan> listForMember(Long memberId) {
         return loanRepository.findByMemberId(memberId);
+    }
+
+    public List<Loan> listAll() {
+        return loanRepository.findAll();
     }
 }

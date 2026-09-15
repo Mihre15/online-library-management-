@@ -58,4 +58,33 @@ public class BookService {
         book.setAvailableCopies(book.getAvailableCopies() + count);
         return bookRepository.save(book);
     }
+
+    @Transactional
+    public Book updateBook(Long id, String title, String author, String isbn, String category) {
+        Book book = getById(id);
+        if (!book.getIsbn().equals(isbn) && bookRepository.existsByIsbn(isbn)) {
+            throw new IllegalArgumentException("A book with ISBN " + isbn + " already exists");
+        }
+        book.setTitle(title);
+        book.setAuthor(author);
+        book.setIsbn(isbn);
+        book.setCategory(category);
+        return bookRepository.save(book);
+    }
+
+    @Transactional
+    public void deleteBook(Long id) {
+        Book book = getById(id);
+        bookRepository.delete(book);
+    }
+
+    public List<Book> searchByTitleOrAuthorOrIsbn(String query) {
+        String lowerQuery = query.toLowerCase();
+        return bookRepository.findAll()
+                .stream()
+                .filter(b -> b.getTitle().toLowerCase().contains(lowerQuery) ||
+                           b.getAuthor().toLowerCase().contains(lowerQuery) ||
+                           b.getIsbn().contains(query))
+                .toList();
+    }
 }
