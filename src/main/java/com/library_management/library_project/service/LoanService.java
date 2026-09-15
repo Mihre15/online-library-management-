@@ -33,7 +33,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class LoanService {
 
     static final int DEFAULT_LOAN_PERIOD_DAYS = 14;
-    private static final List<LoanStatus> OPEN_STATUSES = List.of(LoanStatus.ACTIVE, LoanStatus.OVERDUE);
+    private static final List<LoanStatus> OPEN_STATUSES =
+            List.of(LoanStatus.ACTIVE, LoanStatus.OVERDUE, LoanStatus.RETURN_PENDING);
 
     private final LoanRepository loanRepository;
     private final MemberRepository memberRepository;
@@ -85,11 +86,22 @@ public class LoanService {
     }
 
     @Transactional
-    public Loan returnBook(Long loanId) {
+    public Loan requestReturn(Long loanId) {
         Loan loan = getById(loanId);
         if (loan.getStatus() != LoanStatus.ACTIVE && loan.getStatus() != LoanStatus.OVERDUE) {
             throw new InvalidLoanStateException(
                     "Cannot return a loan in status " + loan.getStatus());
+        }
+        loan.setStatus(LoanStatus.RETURN_PENDING);
+        return loanRepository.save(loan);
+    }
+
+    @Transactional
+    public Loan confirmReturn(Long loanId) {
+        Loan loan = getById(loanId);
+        if (loan.getStatus() != LoanStatus.RETURN_PENDING) {
+            throw new InvalidLoanStateException(
+                    "Cannot confirm a loan in status " + loan.getStatus());
         }
 
         LocalDate today = LocalDate.now(clock);
@@ -149,5 +161,9 @@ public class LoanService {
 
     public List<Loan> listForMember(Long memberId) {
         return loanRepository.findByMemberId(memberId);
+    }
+
+    public List<Loan> listAll() {
+        return loanRepository.findAll();
     }
 }

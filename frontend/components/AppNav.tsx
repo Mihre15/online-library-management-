@@ -3,16 +3,18 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { clearSession, isLoggedIn } from "@/lib/auth";
+import { clearSession, isLoggedIn, isAdmin } from "@/lib/auth";
 import { BRAND } from "@/lib/brand";
 
 export function AppNav() {
   const pathname = usePathname();
   const router = useRouter();
   const [authed, setAuthed] = useState(false);
+  const [admin, setAdmin] = useState(false);
 
   useEffect(() => {
     setAuthed(isLoggedIn());
+    setAdmin(isAdmin());
   }, [pathname]);
 
   if (pathname === "/login") {
@@ -50,6 +52,14 @@ export function AppNav() {
             >
               My loans
             </Link>
+            {admin && (
+              <Link
+                href="/admin"
+                className={`rounded-full px-3 py-1.5 ${pathname.startsWith("/admin") ? "bg-blue-600 text-white" : "text-[var(--muted)] hover:text-[var(--ink)]"}`}
+              >
+                Admin
+              </Link>
+            )}
             <button
               type="button"
               onClick={logout}

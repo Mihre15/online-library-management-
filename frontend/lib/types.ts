@@ -14,6 +14,12 @@ export type LoginResponse = {
   studentId: number;
 };
 
+export type RegisterResponse = {
+  success: boolean;
+  message: string;
+  studentId?: number;
+};
+
 export type BorrowResponse = {
   success: boolean;
   loanId?: number | null;
@@ -38,6 +44,36 @@ export type StudentLoan = {
   status: string;
   dueDate: string;
   fineCharged: number | null;
+};
+
+export type Member = {
+  id: number;
+  fullName: string;
+  email: string;
+  status: string;
+  role: string;
+  registeredAt: string;
+  outstandingFines: number;
+};
+
+export type AdminLoan = {
+  loanId: number;
+  member: {
+    id: number;
+    fullName: string;
+    email: string;
+  };
+  book: {
+    id: number;
+    title: string;
+    author: string;
+    isbn: string;
+  };
+  borrowDate: string;
+  dueDate: string;
+  returnDate: string | null;
+  status: string;
+  fineAmount: number;
 };
 
 export class ApiError extends Error {

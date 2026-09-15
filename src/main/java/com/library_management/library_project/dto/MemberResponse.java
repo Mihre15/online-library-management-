@@ -9,6 +9,7 @@ public record MemberResponse(
         String fullName,
         String email,
         String status,
+        String role,
         LocalDate registeredAt,
         BigDecimal outstandingFines) {
 
@@ -18,6 +19,7 @@ public record MemberResponse(
                 member.getFullName(),
                 member.getEmail(),
                 member.getStatus().name(),
+                member.getRole().name(),
                 member.getRegisteredAt(),
                 member.getOutstandingFines());
     }

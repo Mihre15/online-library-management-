@@ -37,10 +37,19 @@ public class Member {
     @Column(nullable = false, unique = true)
     private String email;
 
+    @Column
+    @ToString.Exclude
+    private String passwordHash;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     @Builder.Default
     private MembershipStatus status = MembershipStatus.ACTIVE;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, columnDefinition = "varchar(20) default 'STUDENT'")
+    @Builder.Default
+    private MemberRole role = MemberRole.STUDENT;
 
     @Column(nullable = false)
     private LocalDate registeredAt;
