@@ -30,9 +30,10 @@ build/
 !**/src/test/**/build/
 
 ### VS Code ###
-.vscode/
 
 .DS_Store
 *.DS_Store
 
 .claude/
+config.bat
+node_modules
