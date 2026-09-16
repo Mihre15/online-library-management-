@@ -1,18 +1,18 @@
-package com.library_management.project.integration;
+package com.library_management.library_project.integration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.library_management.project.entity.Book;
-import com.library_management.project.entity.Loan;
-import com.library_management.project.entity.LoanStatus;
-import com.library_management.project.entity.Member;
-import com.library_management.project.entity.MembershipStatus;
-import com.library_management.project.exception.LoanNotAllowedException;
-import com.library_management.project.repository.BookRepository;
-import com.library_management.project.repository.LoanRepository;
-import com.library_management.project.repository.MemberRepository;
-import com.library_management.project.service.LoanService;
+import com.library_management.library_project.entity.Book;
+import com.library_management.library_project.entity.Loan;
+import com.library_management.library_project.entity.LoanStatus;
+import com.library_management.library_project.entity.Member;
+import com.library_management.library_project.entity.MembershipStatus;
+import com.library_management.library_project.exception.LoanNotAllowedException;
+import com.library_management.library_project.repository.BookRepository;
+import com.library_management.library_project.repository.LoanRepository;
+import com.library_management.library_project.repository.MemberRepository;
+import com.library_management.library_project.service.LoanService;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import org.junit.jupiter.api.BeforeEach;
@@ -69,7 +69,8 @@ class LoanServiceIntegrationTest {
 
         assertThat(bookRepository.findById(book.getId()).orElseThrow().getAvailableCopies()).isZero();
 
-        Loan returned = loanService.returnBook(loan.getId());
+        loanService.requestReturn(loan.getId());
+        Loan returned = loanService.confirmReturn(loan.getId());
 
         assertThat(returned.getStatus()).isEqualTo(LoanStatus.RETURNED);
         assertThat(returned.getFineAmount()).isEqualByComparingTo(BigDecimal.ZERO);
@@ -89,7 +90,8 @@ class LoanServiceIntegrationTest {
                 .fineAmount(BigDecimal.ZERO)
                 .build());
 
-        Loan returned = loanService.returnBook(loan.getId());
+        loanService.requestReturn(loan.getId());
+        Loan returned = loanService.confirmReturn(loan.getId());
 
         // 10 days overdue, in the 8-30 day band at 1.00/day.
         assertThat(returned.getFineAmount()).isEqualByComparingTo("10.00");
@@ -132,7 +134,8 @@ class LoanServiceIntegrationTest {
         Loan overdue = loanService.markOverdue(loan.getId());
         assertThat(overdue.getStatus()).isEqualTo(LoanStatus.OVERDUE);
 
-        Loan returned = loanService.returnBook(loan.getId());
+        loanService.requestReturn(loan.getId());
+        Loan returned = loanService.confirmReturn(loan.getId());
 
         // 35 days overdue, high band at 2.00/day.
         assertThat(returned.getStatus()).isEqualTo(LoanStatus.RETURNED);
