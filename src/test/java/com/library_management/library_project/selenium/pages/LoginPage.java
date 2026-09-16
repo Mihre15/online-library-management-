@@ -76,9 +76,9 @@ public class LoginPage extends BasePage {
         try {
             click(registerLink);
         } catch (Exception e) {
-            ((org.openqa.selenium.JavascriptExecutor) driver).executeScript("arguments[0].click();", registerLink);
-        }
-        if (!driver.getCurrentUrl().contains("/register")) {
+            // Only fall back to a JS click if the WebDriver click itself failed — checking the
+            // URL right after a successful click races the client-side navigation and can fire
+            // a second click at an element that has already navigated away.
             ((org.openqa.selenium.JavascriptExecutor) driver).executeScript("arguments[0].click();", registerLink);
         }
     }

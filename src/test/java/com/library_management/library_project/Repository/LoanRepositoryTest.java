@@ -24,6 +24,7 @@ import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
  * LoanService.
  */
 @DataJpaTest
+
 class LoanRepositoryTest {
 
     @Autowired private LoanRepository loanRepository;
@@ -62,7 +63,7 @@ class LoanRepositoryTest {
                 .fineAmount(BigDecimal.ZERO)
                 .build());
     }
-
+    //saves loan reload it by ID
     @Test
     void savedLoan_roundTripsWithMemberAndBookAssociations() {
         Loan saved = newLoan(LoanStatus.ACTIVE);
@@ -72,7 +73,7 @@ class LoanRepositoryTest {
         assertThat(reloaded.getMember().getEmail()).isEqualTo("ada@example.com");
         assertThat(reloaded.getBook().getIsbn()).isEqualTo("isbn-1");
     }
-
+//create two loans for
     @Test
     void findByMemberId_returnsOnlyThatMembersLoans() {
         newLoan(LoanStatus.ACTIVE);
@@ -82,7 +83,7 @@ class LoanRepositoryTest {
 
         assertThat(loans).hasSize(2);
     }
-
+//creates one acitve one overdue and once retured loan and conforms it by id
     @Test
     void countByMemberIdAndStatusIn_countsOnlyOpenLoans() {
         newLoan(LoanStatus.ACTIVE);
@@ -94,7 +95,7 @@ class LoanRepositoryTest {
 
         assertThat(openCount).isEqualTo(2);
     }
-
+//confirms find status
     @Test
     void findByStatus_filtersAcrossMembers() {
         newLoan(LoanStatus.OVERDUE);

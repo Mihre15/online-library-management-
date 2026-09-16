@@ -177,7 +177,7 @@ real browser and a running frontend **and** backend, not a CI build agent.
 Run them explicitly against a locally running instance of the app:
 
 ```bash
-./mvnw test -Dgroups=selenium
+./mvnw test -DexcludedGroups= -Dgroups=selenium
 ```
 
 ## Project structure

@@ -54,6 +54,12 @@ public class BookDetailPageTest extends BaseSeleniumTest {
         bookDetailPage.open(baseUrl, 1L);
 
         if (bookDetailPage.isPageLoaded() && bookDetailPage.isBorrowButtonVisible() && bookDetailPage.isBorrowButtonEnabled()) {
+            // A real, valid session now makes an actual authenticated request (see
+            // BaseSeleniumTest.setAuthSession), which can resolve fast enough on localhost that
+            // the disabled/loading window is shorter than Selenium's polling interval. Delay the
+            // fetch briefly so the loading state is reliably observable, same as
+            // RegisterPageTest.testSubmitButtonDisabledWhileLoading does for the same reason.
+            delayNetworkRequests(3000);
             bookDetailPage.clickBorrow();
             assertTrue(bookDetailPage.waitForBorrowButtonDisabled() || bookDetailPage.isBorrowLoading(),
                     "Borrow button should become disabled while processing borrow request");

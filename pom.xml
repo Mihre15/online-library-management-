@@ -28,6 +28,9 @@
 	</scm>
 	<properties>
 		<java.version>21</java.version>
+		<!-- Overridable from the command line: run only Selenium tests with
+		     ./mvnw test -DexcludedGroups= -Dgroups=selenium -->
+		<excludedGroups>selenium</excludedGroups>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -128,8 +131,9 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
 					<!-- Selenium/browser tests need a running frontend + real browser and are not
-					     part of the default build; run them explicitly with -Dgroups=selenium. -->
-					<excludedGroups>selenium</excludedGroups>
+					     part of the default build; run them explicitly with
+					     ./mvnw test -DexcludedGroups= -Dgroups=selenium -->
+					<excludedGroups>${excludedGroups}</excludedGroups>
 				</configuration>
 			</plugin>
 			<plugin>
