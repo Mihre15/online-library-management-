@@ -10,17 +10,17 @@ A small library management backend: members can register, books can be added to
 the catalogue, and members borrow and return books. The domain was chosen to
 exercise every technique required by the course:
 
-- **Equivalence partitioning / boundary value analysis** — [`FineCalculator`](src/main/java/com/library_management/project/service/FineCalculator.java)
+- **Equivalence partitioning / boundary value analysis** — [`FineCalculator`](src/main/java/com/library_management/library_project/service/FineCalculator.java)
   computes a late-return fine from a banded schedule (no fine / 0.50 per day /
   1.00 per day / 2.00 per day), with class boundaries at 0, 1, 7, 8, 30 and 31
   days overdue.
-- **Decision table** — [`LoanEligibilityService`](src/main/java/com/library_management/project/service/LoanEligibilityService.java)
+- **Decision table** — [`LoanEligibilityService`](src/main/java/com/library_management/library_project/service/LoanEligibilityService.java)
   decides whether a member may borrow a book from four independent conditions
   (membership active, under the loan limit, a copy available, fines within
   the limit).
-- **State transition testing** — [`LoanService`](src/main/java/com/library_management/project/service/LoanService.java)
-  drives a loan through `ACTIVE → OVERDUE → RETURNED` / `LOST`, with `RETURNED`
-  and `LOST` as terminal states.
+- **State transition testing** — [`LoanService`](src/main/java/com/library_management/library_project/service/LoanService.java)
+  drives a loan through `ACTIVE → OVERDUE → RETURN_PENDING → RETURNED` / `LOST`,
+  with `RETURNED` and `LOST` as terminal states.
 
 ## Tech stack
 
@@ -126,6 +126,61 @@ JaCoCo runs automatically with `./mvnw test` and writes an HTML report to
 at 100% branch coverage; the thin controller/DTO layer is intentionally not
 targeted for full coverage since it holds no branching business logic.
 
+## Continuous integration
+
+Two independent pipelines build and run the backend test suite on every change.
+Both compile with `./mvnw clean compile`, run `./mvnw test`, publish the JUnit
+results, and archive the JaCoCo HTML report as a build artifact.
+
+### GitHub Actions
+
+[`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs on every push or
+pull request to `main` or `backend`:
+
+- **backend** job — JDK 21, build, test, uploads JUnit results and the JaCoCo
+  report as downloadable artifacts.
+- **frontend** job — `npm ci` then `npx tsc --noEmit` (type-checks the Next.js
+  app).
+
+Results appear under the repository's **Actions** tab; open a run and download
+the `jacoco-report` artifact to view coverage.
+
+### Jenkins
+
+The [`Jenkinsfile`](Jenkinsfile) at the repo root defines the same backend
+pipeline for a self-hosted Jenkins instance. To run Jenkins locally via Docker:
+
+```bash
+docker compose -f docker-compose.jenkins.yml up -d
+```
+
+Jenkins comes up on **http://localhost:8081** (8080 is left free for the Spring
+Boot app itself). Retrieve the initial admin password with:
+
+```bash
+docker exec library-jenkins cat /var/jenkins_home/secrets/initialAdminPassword
+```
+
+Complete the setup wizard, then create a new **Pipeline** job with
+**Pipeline script from SCM** → Git → this repository's URL, script path
+`Jenkinsfile`.
+
+### Selenium / end-to-end tests
+
+`src/test/java/.../selenium/` contains a Page Object Model suite (Selenium
+WebDriver 4 + JUnit 5) covering the student flows (login, registration,
+search, borrowing, loans) and the full admin console (books, members, loans,
+dashboard), tagged `@Tag("selenium")`.
+
+These are **excluded from both CI pipelines by default** — `pom.xml`'s
+Surefire configuration sets `excludedGroups: selenium` — because they need a
+real browser and a running frontend **and** backend, not a CI build agent.
+Run them explicitly against a locally running instance of the app:
+
+```bash
+./mvnw test -Dgroups=selenium
+```
+
 ## Project structure
 
 ```
@@ -138,6 +193,5 @@ src/main/java/.../exception   Domain exceptions + a global @RestControllerAdvice
 src/test/java/.../service     Unit tests (test doubles, no Spring context)
 src/test/java/.../repository  @DataJpaTest integration tests
 src/test/java/.../integration @SpringBootTest integration tests (service + controller layers)
+src/test/java/.../selenium     Selenium WebDriver + Page Object Model end-to-end tests
 ```
-
-<!-- CI (GitHub Actions + Jenkins) and Selenium/system tests are covered elsewhere in the repo by other group members. -->
