@@ -1,8 +1,7 @@
 # Online Library Management System
-
+[![CI](https://github.com/Mihre15/Ahadu-estate-/actions/workflows/ci.yml/badge.svg)](https://github.com/Mihre15/Ahadu-estate-/actions)
 Group project for Software Testing and Validation (Addis Ababa University).
 
-<!-- Add every group member's full name and student ID here before submission. -->
 
 ## What this is
 
